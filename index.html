@@ -7,7 +7,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="start-btn">Start Quiz</button>
+    <div id="categorySelection">
+        <h2>Choose a Category</h2>
+        <button onclick="categorizeQuestions('JavaScript')">JavaScript</button>
+        <button onclick="categorizeQuestions('HTML & CSS')">HTML & CSS</button>
+        <button onclick="categorizeQuestions('Maths')">Maths</button>
+        <button onclick="categorizeQuestions('General Knowledge')">General Knowledge</button>
+    </div>
+    
+    <button id="start-btn" onclick="startQuiz()" style="display: none;">Start Quiz</button>
    
     <div id="quiz-container" style="display: none;">
         <div id="message"></div>
