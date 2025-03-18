@@ -141,13 +141,19 @@ function startTimer() {
         timeLeft--;
         document.getElementById("timer").textContent = `You're on a timer: ${timeLeft}s`;
 
-        if (timeLeft === 0) {
+        const timeUpAudio = new Audio("assets/wrong.mp3"); 
+
+        if (timeLeft === 0) { 
             clearInterval(timer);
+
+            timeUpAudio.play();
+
             showAlert("Time's up! Moving to next question...");
             disableAnswers();
+            
             setTimeout(() => {
                 goToNextQuestion();
-            }, 3000);
+            }, 5000);
         }
     }, 1000);
 }
@@ -214,7 +220,7 @@ function showAlert(message) {
     messageBox.style.display = "block"; 
     setTimeout(() => {
         messageBox.style.display = "none"; 
-    }, 3000);
+    }, 5000);
 }
 
 function stopTimer() {
@@ -231,7 +237,7 @@ function checkAnswer(answer, correctAnswer) {
     const buttons = document.querySelectorAll(".answer-btn");
     buttons.forEach(btn => btn.disabled = true);
     
-    let audio = new Audio(answer === correctAnswer ? "correct.mp3" : "wrong.mp3");
+    let audio = new Audio(answer === correctAnswer ? "assets/correct.mp3" : "assets/wrong.mp3");
     audio.play(); 
 
     if (answer === correctAnswer) {
