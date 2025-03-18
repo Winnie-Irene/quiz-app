@@ -4,6 +4,7 @@ Quiz App
 
 The Quiz App is a simple web-based application that allows users to answer multiple-choice questions within a limited time. It features a timer, progress tracking, score calculation, and interactive UI elements.
 
+
 🎯 Features
 
 🔹 Start Quiz Button - Begins the quiz when clicked.
@@ -20,6 +21,7 @@ The Quiz App is a simple web-based application that allows users to answer multi
 
 📊 Progress Bar - Visually represents quiz progress.
 
+
 🛠️ Technologies Used
 
 HTML - Structuring the app layout.
@@ -27,6 +29,7 @@ HTML - Structuring the app layout.
 CSS - Styling the quiz interface.
 
 JavaScript - Handling quiz logic, interactivity, and DOM manipulation.
+
 
 📂 Project Structure
 
@@ -36,6 +39,7 @@ quiz-app/
 │-- script.js       # JavaScript logic for quiz functionality
 │-- assets/         # (Optional) Sounds, images, etc.
 └── README.md       # Project documentation
+
 
 🚀 Getting Started
 
@@ -51,7 +55,10 @@ Simply open index.html in a browser:
 start index.html  # Windows
 open index.html   # Mac
 
+
 🎮 How to Play
+
+Pick a category
 
 Click the Start Quiz button.
 
@@ -63,6 +70,7 @@ If time runs out, an alert will show, and the next question will appear.
 
 After answering all questions, your final score is displayed.
 
+
 🛠️ Future Improvements
 
 🏆 Leaderboard to track high scores.
@@ -73,9 +81,11 @@ After answering all questions, your final score is displayed.
 
 🎭 Dark Mode for a sleek UI.
 
+
 📜 License
 
 This project is open-source.
+
 
 🤝 Contributing
 
