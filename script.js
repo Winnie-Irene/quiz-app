@@ -1,4 +1,4 @@
-const questionElement = document.getElementById("question");
+const questionElement = document.getElementById("question");  
 const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
 const scoreDisplay = document.getElementById("score");
@@ -6,6 +6,7 @@ const progressBar = document.getElementById("progress-bar");
 
 let currentQuestionIndex = 0;
 let score = 0;
+let shuffledQuestions = [];
 
 const questions = [
     { question: "What is 2 + 2?", answers: ["3", "4", "5", "6"], correct: "4" },
@@ -32,6 +33,9 @@ const questions = [
 
 const startButton = document.getElementById("start-btn");
 const questionContainer = document.getElementById("quiz-container");
+const timerDisplay = document.getElementById("timer");
+const messageBox = document.getElementById("message");
+
 questionContainer.style.display = "none"; 
 
 startButton.addEventListener("click", () => {
@@ -41,86 +45,27 @@ startButton.addEventListener("click", () => {
 });
 
 function startQuiz() {
+    shuffledQuestions = [...questions];
+    shuffleQuestions(shuffledQuestions);
     currentQuestionIndex = 0;
     score = 0;
     scoreDisplay.textContent = "Score: 0";
     nextButton.style.display = "none";
     document.getElementById("timer").style.display = "block";
-    progressBar.style.width = "0%"; 
-    showQuestion();
+    progressBar.style.width = "0%";
+    showQuestion()
 }
 
-
-function updateProgressBar() {
-    let progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-    progressBar.style.width = `${progress}%`;
+function shuffleQuestions(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
-
-
-let timeLeft = 10;
-let timer;
-
-
-function startTimer() {
-    clearInterval(timer); 
-
-    timeLeft = 10;
-    document.getElementById("timer").textContent = `You're on a timer: ${timeLeft}s`;
-
-    timer = setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").textContent = `You're on a timer: ${timeLeft}s`;
-
-        if (timeLeft === 0) {
-            clearInterval(timer);
-            playTimeUpSound(); 
-            showAlert("Time's up! Moving to next question...");
-            disableAnswers();
-
-            setTimeout(() => {
-                nextButton.click();
-            }, 5000)
-        }
-    }, 1000);
-}
-
-
-function disableAnswers() {
-    const answerButtons = document.querySelectorAll(".answer-btn"); 
-    answerButtons.forEach(button => {
-        button.disabled = true;
-        if (button.dataset.correct === "true") {
-            button.style.backgroundColor = "lightgreen";
-        }
-    });
-}
-
-
-function showAlert(message) {
-    const messageBox = document.getElementById("message");
-    messageBox.textContent = message;
-    messageBox.style.display = "block"; 
-
-    setTimeout(() => {
-        messageBox.style.display = "none"; 
-    }, 5000);
-}
-
-
-function playTimeUpSound() {
-    let audio = new Audio("beep.mp3");
-    audio.play();
-}
-
-
-function stopTimer() {
-    clearInterval(timer);
-}
-
 
 function showQuestion() {
     resetState();
-    let currentQuestion = questions[currentQuestionIndex];
+    let currentQuestion = shuffledQuestions[currentQuestionIndex];
     questionElement.textContent = currentQuestion.question;
 
     currentQuestion.answers.forEach(answer => {
@@ -131,23 +76,104 @@ function showQuestion() {
         answerButtons.appendChild(button);
     });
 
-    updateProgressBar(); 
+    updateProgressBar();
     startTimer();
 }
 
+function updateProgressBar() {
+    let progress = ((currentQuestionIndex + 1) / shuffledQuestions.length) * 100;
+    progressBar.style.width = `${progress}%`;
+}
+
+let timeLeft = 10;
+let timer;
+
+function startTimer() {
+    clearInterval(timer);
+    timeLeft = 10;
+    document.getElementById("timer").textContent = `You're on a timer: ${timeLeft}s`;
+
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").textContent = `You're on a timer: ${timeLeft}s`;
+
+        if (timeLeft === 0) {
+            clearInterval(timer);
+            showAlert("Time's up! Moving to next question...");
+            disableAnswers();
+            setTimeout(() => {
+                goToNextQuestion();
+            }, 3000);
+        }
+    }, 1000);
+}
+
+function goToNextQuestion() {
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+    } else {
+
+        document.getElementById("timer").style.display = "none"; 
+        document.getElementById("score").style.display = "none"; 
+
+        questionElement.textContent = `Quiz Over! Your final score is ${score}/${shuffledQuestions.length}`;
+        answerButtons.innerHTML = "";
+        nextButton.textContent = "Restart";
+        nextButton.style.display = "block";
+
+        nextButton.onclick = restartQuiz;
+    }
+}
+
+function restartQuiz() {
+
+    currentQuestionIndex = 0;
+    score = 0;
+    scoreDisplay.textContent = "Score: 0";
+    
+    shuffledQuestions = [...questions]; 
+    shuffleQuestions(shuffledQuestions);
+
+    nextButton.textContent = "Next";
+    nextButton.style.display = "none";
+
+    nextButton.onclick = goToNextQuestion; 
+
+    startQuiz(); 
+}
+
+function disableAnswers() {
+    document.querySelectorAll(".answer-btn").forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.style.backgroundColor = "lightgreen";
+        }
+    });
+}
+
+function showAlert(message) {
+    messageBox.textContent = message;
+    messageBox.style.display = "block"; 
+    setTimeout(() => {
+        messageBox.style.display = "none"; 
+    }, 3000);
+}
+
+function stopTimer() {
+    clearInterval(timer);
+}
 
 function resetState() {
     nextButton.style.display = "none";
     answerButtons.innerHTML = "";
 }
 
-
 function checkAnswer(answer, correctAnswer) {
-    stopTimer(); 
-
+    stopTimer();
     const buttons = document.querySelectorAll(".answer-btn");
     buttons.forEach(btn => btn.disabled = true);
-
+    
     let audio = new Audio(answer === correctAnswer ? "correct.mp3" : "wrong.mp3");
     audio.play(); 
 
@@ -158,33 +184,17 @@ function checkAnswer(answer, correctAnswer) {
 
     buttons.forEach(btn => {
         if (btn.textContent === correctAnswer) {
-            btn.style.backgroundColor = "green"; 
+            btn.style.backgroundColor = "green";
         } else if (btn.textContent === answer) {
-            btn.style.backgroundColor = "red"; 
+            btn.style.backgroundColor = "red";
         }
     });
 
     nextButton.style.display = "block"; 
 }
 
+nextButton.onclick = () => {
+    goToNextQuestion();
+};
 
-nextButton.addEventListener("click", () => {
-    currentQuestionIndex++;
 
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
-    } else {
-        stopTimer();
-        document.getElementById("timer").style.display = "none"; 
-        questionElement.textContent = `Quiz Over! Your final score is ${score}/${questions.length}`;
-        answerButtons.innerHTML = "";
-        nextButton.textContent = "Restart";
-        
-        nextButton.onclick = () => {
-            startQuiz();
-            nextButton.textContent = "Next";
-        };
-    }
-});
-
-startQuiz();
